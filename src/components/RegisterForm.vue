@@ -206,14 +206,36 @@ export default {
     };
   },
   methods: {
-    register() {
-      this.regShowAlert = true;
-      this.regInSubmission = true;
-      this.regAlertVariant = 'bg-blue-500';
-      this.regAlertMessage = 'Please wait ! Your account is being created.';
-
-      this.regAlertVariant = 'bg-green-500';
-      this.regAlertMessage = 'Success ! Your account has been created';
+    setStatus(regShowAlert, regInSubmission, regAlertVariant, regAlertMessage) {
+      this.regShowAlert = regShowAlert;
+      this.regInSubmission = regInSubmission;
+      this.regAlertVariant = regAlertVariant;
+      this.regAlertMessage = regAlertMessage;
+    },
+    async register(values) {
+      this.setStatus(
+        true,
+        true,
+        'bg-blue-500',
+        'Please wait ! Your account is being created.',
+      );
+      try {
+        await this.$store.dispatch('register', values);
+      } catch (error) {
+        this.setStatus(
+          true,
+          false,
+          'bg-red-500',
+          'An unexpected error occured !',
+        );
+        return;
+      }
+      this.setStatus(
+        true,
+        false,
+        'bg-green-500',
+        'Success ! Your account has been created',
+      );
     },
   },
 };

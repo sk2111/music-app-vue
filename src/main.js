@@ -5,10 +5,16 @@ import store from './store';
 import veeValidate from './includes/validation';
 import './assets/tailwind.css';
 import './assets/main.css';
+import { auth } from './includes/firebase';
 
-const app = createApp(App);
-app.use(veeValidate);
-app.use(store);
-app.use(router);
+let app;
 
-app.mount('#app');
+auth.onAuthStateChanged(() => {
+  if (!app) {
+    app = createApp(App);
+    app.use(veeValidate);
+    app.use(store);
+    app.use(router);
+    app.mount('#app');
+  }
+});
