@@ -236,6 +236,7 @@ export default {
         'bg-green-500',
         'Success ! Your account has been created',
       );
+      window.location.reload();
     },
   },
 };
