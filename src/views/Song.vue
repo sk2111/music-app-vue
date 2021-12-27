@@ -22,7 +22,7 @@
         "
         @click.prevent="newSong(song)"
       >
-        <i class="fas" :class="playing ? 'fa-pause' : 'fa-play'"></i>
+        <i class="fas fa-play"></i>
       </button>
       <div class="z-50 text-left ml-8">
         <!-- Song Info -->
