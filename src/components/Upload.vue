@@ -61,7 +61,7 @@
 
 <script>
 import { uuid } from 'vue-uuid';
-import { storage, auth, songsCollection } from '@/includes/firebase';
+import { storage, auth, songsCollection, timestamp } from '@/includes/firebase';
 
 export default {
   name: 'Upload',
@@ -115,6 +115,7 @@ export default {
         genre: '',
         commentCount: 0,
         url: await task.snapshot.ref.getDownloadURL(),
+        updatedAt: timestamp.now(),
       };
       const songRef = await songsCollection.add(song);
       this.updateProgressBarStyles(

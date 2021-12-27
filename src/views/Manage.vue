@@ -73,6 +73,7 @@ export default {
     async fetchSongList() {
       const snapshot = await songsCollection
         .where('uid', '==', auth.currentUser.uid)
+        .orderBy('updatedAt', 'desc')
         .get();
       snapshot.forEach((doc) => {
         this.addSong({ id: doc.id, ...doc.data() });
