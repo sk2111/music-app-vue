@@ -33,10 +33,11 @@
           @dragover.prevent.stop="isDragOver = true"
           @dragenter.prevent.stop="isDragOver = true"
           @dragleave.prevent.stop="isDragOver = false"
-          @drop.prevent.stop="upload($event)"
+          @drop.prevent.stop="upload($event.dataTransfer)"
         >
           <h5>Drop your files here</h5>
         </div>
+        <input type="file" multiple @change="upload($event.target)" />
         <hr class="my-6" />
         <!-- Progess Bars -->
         <div class="mb-4" v-for="upload in uploads" :key="upload.name">
@@ -59,7 +60,7 @@
 </template>
 
 <script>
-import { storage } from '@/includes/firebase';
+import { storage, auth, songsCollection } from '@/includes/firebase';
 
 export default {
   name: 'Upload',
@@ -69,40 +70,72 @@ export default {
       uploads: [],
     };
   },
+  beforeUnmount() {
+    this.uploads.forEach(({ task }) => task.cancel());
+  },
   methods: {
-    upload(event) {
+    updateUpload(task, name) {
+      return (
+        this.uploads.push({
+          task,
+          name,
+          currentProgress: 0,
+          variant: 'bg-blue-400',
+          icon: 'fas fa-spinner fa-spin',
+          textClass: '',
+        }) - 1
+      );
+    },
+    updateProgressBarStyles(idx, variant, icon, textClass) {
+      this.uploads[idx].variant = variant;
+      this.uploads[idx].icon = icon;
+      this.uploads[idx].textClass = textClass;
+    },
+    updateProgressBar({ bytesTransferred, totalBytes }, idx) {
+      const progress = (bytesTransferred / totalBytes) * 100;
+      this.uploads[idx].currentProgress = progress;
+    },
+    handleUploadError(error, idx) {
+      this.updateProgressBarStyles(
+        idx,
+        'bg-red-400',
+        'fa fa-times',
+        'text-red-400',
+      );
+      console.log(error);
+    },
+    async handleUploadSucces(task, idx) {
+      const song = {
+        uid: auth.currentUser.uid,
+        displayName: auth.currentUser.displayName,
+        originalName: task.snapshot.ref.name,
+        modifiedName: task.snapshot.ref.name,
+        genre: '',
+        commentCount: 0,
+        url: await task.snapshot.ref.getDownloadURL(),
+      };
+      await songsCollection.add(song);
+      this.updateProgressBarStyles(
+        idx,
+        'bg-green-400',
+        'fa fa-check',
+        'text-green-400',
+      );
+    },
+    upload({ files }) {
       this.isDragOver = false;
-      const files = [...event.dataTransfer.files];
-      files.forEach((file) => {
+      const songFiles = [...files];
+      songFiles.forEach((file) => {
         if (file.type.includes('audio')) {
           const storageRef = storage.ref();
           const songsRef = storageRef.child(`songs/${file.name}`);
           const task = songsRef.put(file);
-          const uploadIdx = this.uploads.push({
-            task,
-            currentProgress: 0,
-            name: file.name,
-            variant: 'bg-blue-400',
-            icon: 'fas fa-spinner fa-spin',
-            textClass: '',
-          });
+          const uploadIdx = this.updateUpload(task, file.name);
           task.on(
             'state_changed',
-            ({ bytesTransferred, totalBytes }) => {
-              const progress = (bytesTransferred / totalBytes) * 100;
-              this.uploads[uploadIdx - 1].currentProgress = progress;
-            },
-            (error) => {
-              this.uploads[uploadIdx - 1].variant = 'bg-red-400';
-              this.uploads[uploadIdx - 1].icon = 'fas fa-times';
-              this.uploads[uploadIdx - 1].textClass = 'text-red-400';
-              console.log(error);
-            },
-            () => {
-              this.uploads[uploadIdx - 1].variant = 'bg-green-400';
-              this.uploads[uploadIdx - 1].icon = 'fas fa-check';
-              this.uploads[uploadIdx - 1].textClass = 'text-green-400';
-            },
+            (snapshot) => this.updateProgressBar(snapshot, uploadIdx),
+            (error) => this.handleUploadError(error, uploadIdx),
+            () => this.handleUploadSucces(task, uploadIdx),
           );
         }
       });
