@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { uuid } from 'vue-uuid';
 import { storage, auth, songsCollection } from '@/includes/firebase';
 
 export default {
@@ -104,12 +105,13 @@ export default {
       );
       console.log(error);
     },
-    async handleUploadSucces(task, idx) {
+    async handleUploadSucces(task, file, idx) {
       const song = {
         uid: auth.currentUser.uid,
         displayName: auth.currentUser.displayName,
-        originalName: task.snapshot.ref.name,
-        modifiedName: task.snapshot.ref.name,
+        songStorageRef: task.snapshot.ref.name,
+        originalSongName: file.name,
+        modifiedSongName: file.name,
         genre: '',
         commentCount: 0,
         url: await task.snapshot.ref.getDownloadURL(),
@@ -129,14 +131,14 @@ export default {
       songFiles.forEach((file) => {
         if (file.type.includes('audio')) {
           const storageRef = storage.ref();
-          const songsRef = storageRef.child(`songs/${file.name}`);
+          const songsRef = storageRef.child(`songs/${uuid.v1()}-${file.name}`);
           const task = songsRef.put(file);
           const uploadIdx = this.updateUpload(task, file.name);
           task.on(
             'state_changed',
             (snapshot) => this.updateProgressBar(snapshot, uploadIdx),
             (error) => this.handleUploadError(error, uploadIdx),
-            () => this.handleUploadSucces(task, uploadIdx),
+            () => this.handleUploadSucces(task, file, uploadIdx),
           );
         }
       });

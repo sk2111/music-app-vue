@@ -2,7 +2,7 @@
   <div class="border border-gray-200 p-3 mb-4 rounded">
     <div v-show="!showForm">
       <h4 class="inline-block text-1xl font-bold w-96 truncate">
-        {{ song.modifiedName }}
+        {{ song.modifiedSongName }}
       </h4>
       <button
         class="ml-1 py-1 px-2 text-sm rounded text-white bg-red-600 float-right"
@@ -40,9 +40,9 @@
         @submit="handleSubmit"
       >
         <div class="mb-3">
-          <label class="inline-block mb-2">{{ song.modifiedName }}</label>
+          <label class="inline-block mb-2">{{ song.modifiedSongName }}</label>
           <vee-field
-            name="modifiedName"
+            name="modifiedSongName"
             type="text"
             class="
               block
@@ -59,7 +59,7 @@
             @input="updateUnsavedFlag(true)"
             placeholder="Enter Song Title"
           />
-          <ErrorMessage name="modifiedName" class="text-red-600 mt-4" />
+          <ErrorMessage name="modifiedSongName" class="text-red-600 mt-4" />
         </div>
         <div class="mb-3">
           <label class="inline-block mb-2">Genre</label>
@@ -133,7 +133,7 @@ export default {
     return {
       showForm: false,
       schema: {
-        modifiedName: 'required',
+        modifiedSongName: 'required',
         genre: 'alpha_spaces',
       },
       inSubmission: false,
@@ -183,7 +183,7 @@ export default {
     async deleteSong() {
       try {
         const storageRef = storage.ref();
-        const songRef = storageRef.child(`/songs/${this.song.originalName}`);
+        const songRef = storageRef.child(`/songs/${this.song.songStorageRef}`);
         await songRef.delete();
         await songsCollection.doc(this.song.id).delete();
         this.removeSong(this.idx);
