@@ -114,13 +114,14 @@ export default {
         commentCount: 0,
         url: await task.snapshot.ref.getDownloadURL(),
       };
-      await songsCollection.add(song);
+      const songRef = await songsCollection.add(song);
       this.updateProgressBarStyles(
         idx,
         'bg-green-400',
         'fa fa-check',
         'text-green-400',
       );
+      this.$emit('upload-completed', { id: songRef.id, ...song });
     },
     upload({ files }) {
       this.isDragOver = false;
