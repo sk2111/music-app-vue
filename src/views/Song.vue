@@ -19,6 +19,7 @@
           rounded-full
           focus:outline-none
         "
+        @click.prevent="newSong(song)"
       >
         <i class="fas fa-play"></i>
       </button>
@@ -113,7 +114,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import {
   songsCollection,
   commentsCollection,
@@ -169,6 +170,7 @@ export default {
     this.getComments();
   },
   methods: {
+    ...mapActions(['newSong']),
     async getComments() {
       const snapshots = await commentsCollection
         .where('sid', '==', this.$route.params.id)
