@@ -18,10 +18,11 @@
           text-black
           rounded-full
           focus:outline-none
+          ml-5
         "
         @click.prevent="newSong(song)"
       >
-        <i class="fas fa-play"></i>
+        <i class="fas" :class="playing ? 'fa-pause' : 'fa-play'"></i>
       </button>
       <div class="z-50 text-left ml-8">
         <!-- Song Info -->
@@ -114,7 +115,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import {
   songsCollection,
   commentsCollection,
@@ -136,6 +137,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['playing']),
     ...mapState(['userLoggedIn']),
     sortedComments() {
       return this.comments.slice().sort((a, b) => {
