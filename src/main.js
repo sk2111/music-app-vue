@@ -8,6 +8,7 @@ import './assets/main.css';
 import { auth } from './includes/firebase';
 import Icon from './directives/icon';
 import i18n from './includes/i18n';
+import './registerServiceWorker';
 
 let app;
 

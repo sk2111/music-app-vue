@@ -10,4 +10,11 @@ module.exports = {
       fullInstall: true,
     },
   },
+  pwa: {
+    name: 'My Music',
+    themeColor: '#ff5e3a',
+    manifestOptions: {
+      short_name: 'Music',
+    },
+  },
 };
