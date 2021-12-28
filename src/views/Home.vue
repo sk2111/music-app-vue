@@ -92,7 +92,8 @@ export default {
       }
       this.pendingRequest = true;
       const snapshots = await this.getSnapshots();
-      this.lastSongRef = snapshots.docs[snapshots.docs.length - 1];
+      const lastItem = snapshots.docs.length - 1;
+      this.lastSongRef = snapshots.docs[lastItem] ?? this.lastSongRef;
       snapshots.forEach((doc) => {
         this.songs.push({ id: doc.id, ...doc.data() });
       });

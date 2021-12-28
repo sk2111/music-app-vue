@@ -122,7 +122,7 @@
         <!-- Comment Author -->
         <div class="mb-5">
           <div class="font-bold">{{ comment.name }}</div>
-          <time>{{ comment.updatedAt }}</time>
+          <time>{{ getFormattedCommentDate(comment.updatedAt.toDate()) }}</time>
         </div>
 
         <p>
@@ -134,6 +134,7 @@
 </template>
 
 <script>
+import dateFormat from 'dateformat';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import {
   songsCollection,
@@ -192,6 +193,9 @@ export default {
   },
   methods: {
     ...mapActions(['newSong']),
+    getFormattedCommentDate(date) {
+      return dateFormat(date);
+    },
     async getComments() {
       const snapshots = await commentsCollection
         .where('sid', '==', this.$route.params.id)

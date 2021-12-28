@@ -15,9 +15,9 @@
         <ul class="flex flex-row mt-1">
           <!-- Navigation Links -->
           <li>
-            <router-link class="px-2 text-white" :to="{ name: 'about' }"
+            <!-- <router-link class="px-2 text-white" :to="{ name: 'about' }"
               >About</router-link
-            >
+            > -->
           </li>
           <li v-if="!userLoggedIn">
             <a class="px-2 text-white" href="#" @click.prevent="toggleAuthModal"
@@ -30,7 +30,7 @@
                 >Manage</router-link
               >
             </li>
-            <li>
+            <li class="ml-4">
               <a class="px-2 text-white" href="#" @click.prevent="signOut"
                 >Logout</a
               >
