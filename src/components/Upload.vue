@@ -130,6 +130,17 @@ export default {
       this.isDragOver = false;
       const songFiles = [...files];
       songFiles.forEach((file) => {
+        if (!navigator.onLine) {
+          this.uploads.push({
+            task: {},
+            name: file.name,
+            currentProgress: 100,
+            variant: 'bg-red-400',
+            icon: 'fas fa-times',
+            textClass: 'text-red-400',
+          });
+          return;
+        }
         if (file.type.includes('audio')) {
           const storageRef = storage.ref();
           const songsRef = storageRef.child(`songs/${uuid.v1()}-${file.name}`);
