@@ -1,6 +1,10 @@
 {
   "home": {
-    "listen": " Écoutez de la bonne musique !"
+    "listen": " Écoutez de la bonne musique !",
+    "title": " Ma musique"
+  },
+  "manage": {
+    "mySongs": " Mes chansons!"
   },
   "song": {
     "commentCount": ""

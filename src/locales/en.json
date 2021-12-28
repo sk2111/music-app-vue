@@ -1,6 +1,10 @@
 {
   "home": {
-    "listen": "Listen to Great Music!"
+    "listen": "Listen to Great Music!",
+    "title": "My Music"
+  },
+  "manage": {
+    "mySongs": "My Songs"
   },
   "song": {
     "commentCount": "No comments | 1 Comment | {count} Comments"
